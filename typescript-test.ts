@@ -128,7 +128,8 @@ let size: object = polished.size("");
 size = polished.size("", "");
 
 const textInputs: string = polished.textInputs("active", null, undefined);
-const transitions: object = polished.transitions("opacity 1.0s ease-in 0s", "width 2.0s ease-in 2s");
+let transitions: object = polished.transitions("opacity 1.0s ease-in 0s", "width 2.0s ease-in 2s");
+transitions = polished.transitions(["color", "background-color"], "2.0s ease-in 2s");
 
 /*
  * Helpers
