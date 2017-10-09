@@ -7,6 +7,8 @@ import json from 'rollup-plugin-json'
 import flow from 'rollup-plugin-flow'
 import uglify from 'rollup-plugin-uglify'
 
+import { list as babelHelpersList } from 'babel-helpers'
+
 const processShim = '\0process-shim'
 
 const prod = process.env.PRODUCTION
@@ -14,13 +16,13 @@ const mode = prod ? 'production' : 'development'
 
 console.log(`Creating ${mode} bundle...`)
 
-const targets = prod ?
+const output = prod ?
 [
-  { dest: 'dist/polished.min.js', format: 'umd' },
+  { file: 'dist/polished.min.js', format: 'umd' },
 ] :
 [
-  { dest: 'dist/polished.js', format: 'umd' },
-  { dest: 'dist/polished.es.js', format: 'es' },
+  { file: 'dist/polished.js', format: 'umd' },
+  { file: 'dist/polished.es.js', format: 'es' },
 ]
 
 const plugins = [
@@ -54,7 +56,10 @@ const plugins = [
     plugins: [
       'external-helpers',
       'transform-object-rest-spread',
+      'annotate-pure-calls',
     ],
+    // fixing temporary rollup's regression, remove when rollup/rollup#1595 gets solved
+    externalHelpersWhitelist: babelHelpersList.filter(helperName => helperName !== 'asyncGenerator'),
   }),
   json(),
 ]
@@ -62,9 +67,9 @@ const plugins = [
 if (prod) plugins.push(uglify())
 
 export default {
-  entry: 'src/index.js',
-  moduleName: 'polished',
+  input: 'src/index.js',
+  name: 'polished',
   exports: 'named',
-  targets,
+  output,
   plugins,
 }
